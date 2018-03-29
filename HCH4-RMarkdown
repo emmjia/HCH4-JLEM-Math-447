@@ -1,7 +1,7 @@
 ---
 title: 'Chapter 4: 4.3, 4.7, 4.13, 4.18, 4.22'
 author: "Jeremy Ling & Emmanuel Mejia"
-date: "March 27, 2018"
+date: "March 29, 2018"
 output: pdf_document
 ---
 
@@ -106,8 +106,8 @@ While using Fisher LSD we output a pvalue for the compariosns of $\mu_1=\mu_2$, 
 
 (c)
 
-```{r fig.width=4, fig.height=3}
-cscale.lm=lm(Yield ~ factor(Tip), data = cscaleLong)
+```{r,echo=FALSE,out.width='.49\\linewidth', fig.width=3, fig.height=3}
+cscale.lm=lm(Yield ~ factor(Coupon) + factor(Tip), data = cscaleLong)
 summary(cscale.lm)
 
 library(car)
@@ -120,17 +120,28 @@ After observing the qqplot and residual plot we see that normality is fine and t
 
 ##4.13
 
-```{r}
+```{r cache=FALSE, results=FALSE, warning=FALSE, comment=FALSE, warning=FALSE}
 library(readxl)
-latin <- read_excel("latin.xlsx")
-matrix(latin$SD, 4,6)
-matrix(latin$Voltage, 4,6)
+rbdvolt <- read_excel("rbdvolt.xlsx")
+rbdvoltLong=reshape(rbdvolt,
+                     varying = c("Time1", "Time2", "Time3",
+                                 "Time4", "Time5", "Time6"),
+                     v.names = "Yield", timevar = "Time",
+                     direction = "long")
+
+rbdsd <- read_excel("rbdsd.xlsx")
+rbdsdLong=reshape(rbdsd,
+                     varying = c("Time1", "Time2", "Time3",
+                                 "Time4", "Time5", "Time6"),
+                     v.names = "Yield", timevar = "Time",
+                     direction = "long")
 ```
 
 (a)
 
 ```{r}
-summary(aov(Voltage ~ factor(Ratio.Control) + factor(Time.Period) + SD, latin))
+rbdvolt.aov=aov(Yield ~ factor(Ratio.Control) + factor(Time), data = rbdvoltLong)
+summary(rbdvolt.aov)
 ```
 
 $H_0: T_1=...=T=p=0$
@@ -139,10 +150,75 @@ vs
 
 $H_1: T_i\ne 0$ at least one.
 
-We look at our ANOVA and pay close attention to our results in terms of ratio control. We have a f-value of 0.191 and a p-value too big of 0.901. We fail to reject our null hypothesis and conclude that ratio control has no affect on voltage.
+We look at our ANOVA and pay close attention to our results in terms of ratio control. We have a f-value of 0.190 and a p-value too big of 0.901. We fail to reject our null hypothesis and conclude that ratio control does not affect voltage.
 
 (b)
 
 ```{r}
+rbdsd.aov=aov(Yield ~ factor(Ratio.Control) + factor(Time), data = rbdsdLong)
+summary(rbdsd.aov)
+```
+
+$H_0: T_1=...=T=p=0$
+
+vs
+
+$H_1: T_i\ne 0$ at least one.
+
+From the ANOVA, observing the standard deviation of Voltage we see that we have f-value of 50.756 and a very small p-value of 4.34e-08 for ratio control. We reject our null hypothesis and conclude that ratio control does affect standard deviation or "pot noise". 
+
+(c)
+
+```{r,echo=FALSE,out.width='.49\\linewidth', fig.width=3, fig.height=3}
+rbdvolt.lm = lm(Yield ~ factor(Ratio.Control) + factor(Time), rbdvoltLong)
+qqPlot(residuals(rbdvolt.lm))
+plot(fitted(rbdvolt.lm), residuals(rbdvolt.lm))
+plot(fitted(rbdvolt.lm), abs(residuals(rbdvolt.lm)))
+```
+
+By performing a qqplot and residual plots we see that normality is up to check and our residual plot is a structureless pattern which means that our model is good.
+
+(d)
+
+From the first algorithm we were unsuccesful to reduce the voltage, on the other hand on algorithm two we manage to reduce the SD or Pot Noise successfully. It is best to choose algorithm 2.
+
+##4.18
+
+```{r}
+clothMissing=clothLong
+clothMissing["2.3", "Yield"]=NA
+summary(aov(Yield ~ factor(Chemical) + factor(Bolt), clothMissing))
+
+x=predict(aov(Yield ~ factor(Chemical) + factor(Bolt), clothMissing), newdata = clothLong["2.3", ]); x
+#72.25
+clothImpute=clothMissing
+clothImpute["2.3", "Yield"]=75.25
+
+a=aov(Yield ~ factor(Chemical) + factor(Bolt), clothImpute)
+summary(a)
+a$df.residual=a$df.residual - 1 #important: correction of df!
+summary(a)
+```
+
+Using R we are able to set the missing value as x and solve it, which results to 75.25. In which this value gives us the minimum error. As we can see from our new anova we see that all p-values and f-values are to check and can confirm this model is a good model.
+
+##4.22
+
+```{r}
+library(readxl)
+chemical <- read_excel("chemical.xlsx")
+
+matrix(chemical$Ingrediants, 5,5)
+matrix(chemical$Reaction.Time, 5,5)
+
+summary(aov(Reaction.Time ~ factor(Batch) + factor(Day) + Ingrediants, chemical))
 
 ```
+
+$H_0: T_1=...=T=p=0$
+
+vs
+
+$H_1: T_i\ne 0$ at least one.
+
+Based on our ANOVA we see that our treatment has a f-value of 11.309 with a p-value of 0.000488. Our p-value is very small and we reject our null hypothesis. We can state that chemical process and time of day have an affect on our ingrediants (A,B,C,D,E). 
