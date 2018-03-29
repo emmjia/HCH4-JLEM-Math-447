@@ -7,6 +7,15 @@ output: pdf_document
 
 ##4.3
 
+\textbf{A chemist wishes to test the effect of four chemical
+agents on the strength of a particular type of cloth. Because
+there might be variability from one bolt to another, the
+chemist decides to use a randomized block design, with the
+bolts of cloth considered as blocks. She selects five bolts and
+applies all four chemicals in random order to each bolt. The
+resulting tensile strengths follow. Analyze the data from this
+experiment (use $\alpha$ = 0.05) and draw appropriate conclusions.}
+
 ```{r cache=FALSE, results=FALSE, warning=FALSE, comment=FALSE, warning=FALSE}
 library(readxl)
 cloth <- read_excel("cloth.xlsx")
@@ -35,7 +44,14 @@ $H_1: T_i\ne 0$ at least one.
 
 From our ANOVA we see that our chemical has an f-value of 2.376 with a p-value = 0.121. Our p-value is too big so we must fail to reject our null hypothesis and conclude that there is no differences between the treatment/chemical types.
 
+\pagebreak
+
 ##4.7
+
+\textbf{Consider the hardness testing experiment described in
+Section 4.1. Suppose that the experiment was conducted as
+described and that the following Rockwell C-scale data
+(coded by subtracting 40 units) obtained:}
 
 ```{r cache=FALSE, results=FALSE, warning=FALSE, comment=FALSE, warning=FALSE}
 library(readxl)
@@ -49,7 +65,7 @@ cscaleLong=reshape(cscale,
 
 ```
 
-(a)
+\textbf{(a) Analyze the data from this experiment.}
 
 ```{r}
 cscale.aov=aov(Yield ~ factor(Coupon) + factor(Tip), data = cscaleLong)
@@ -65,7 +81,9 @@ $H_1: T_i\ne 0$ at least one.
 
 Based on our ANOVA we see that we have a f-value of 14.44 and a p-value of 0.000871. Our p-value is very small compare to the significance value so we must reject our null hypothesis and conclude that the treatment/tips are significantly different. 
 
-(b)
+\textbf{(b) Use the Fisher LSD method to make comparisons
+among the four tips to determine specifically which
+tips differ in mean hardness readings.}
 
 ```{r}
 ybar.trt=as.vector(with(cscaleLong, tapply(Yield,Tip,function(x) mean(x)))) #bar(Y_i.) vector
@@ -104,12 +122,11 @@ pvalue=2*pt(abs(t0),(a-1)*(b-1),lower.tail=F); pvalue
 
 While using Fisher LSD we output a pvalue for the compariosns of $\mu_1=\mu_2$, $\mu_1=\mu_3$, $\mu_1=\mu_4$, $\mu_2=\mu_3$, $\mu_2=\mu_4$, and $\mu_3=\mu_4$ and the results are presented above respectively. We see that the comparisons of $\mu_1=\mu_4$, $\mu_2=\mu_4$, and $\mu_3=\mu_4$ are different in tips of mean hardness.
 
-(c)
+\textbf{(c) Analyze the residuals from this experiment.}
 
 ```{r,echo=FALSE,out.width='.49\\linewidth', fig.width=3, fig.height=3}
 cscale.lm=lm(Yield ~ factor(Coupon) + factor(Tip), data = cscaleLong)
 summary(cscale.lm)
-
 library(car)
 qqPlot(residuals(cscale.lm))
 plot(fitted(cscale.lm), residuals(cscale.lm))
@@ -118,7 +135,17 @@ plot(fitted(cscale.lm), abs(residuals(cscale.lm)))
 
 After observing the qqplot and residual plot we see that normality is fine and there is no pattern but a structureless image on our plot. We can conclude our model is good.
 
+\pagebreak
+
 ##4.13
+
+\textbf{Consider the ratio control algorithm experiment
+described in Section 3.8. The experiment was actually conducted
+as a randomized block design, where six time periods
+were selected as the blocks, and all four ratio control algorithms
+were tested in each time period. The average cell
+voltage and the standard deviation of voltage (shown in
+parentheses) for each cell are as follows:}
 
 ```{r cache=FALSE, results=FALSE, warning=FALSE, comment=FALSE, warning=FALSE}
 library(readxl)
@@ -137,7 +164,9 @@ rbdsdLong=reshape(rbdsd,
                      direction = "long")
 ```
 
-(a)
+\textbf{(a) Analyze the average cell voltage data. (Use
+$\alpha$ = 0.05.) Does the choice of ratio control algorithm
+affect the average cell voltage?}
 
 ```{r}
 rbdvolt.aov=aov(Yield ~ factor(Ratio.Control) + factor(Time), data = rbdvoltLong)
@@ -152,7 +181,10 @@ $H_1: T_i\ne 0$ at least one.
 
 We look at our ANOVA and pay close attention to our results in terms of ratio control. We have a f-value of 0.190 and a p-value too big of 0.901. We fail to reject our null hypothesis and conclude that ratio control does not affect voltage.
 
-(b)
+\textbf{(b) Perform an appropriate analysis on the standard deviation
+of voltage. (Recall that this is called “pot noise.”)
+Does the choice of ratio control algorithm affect the
+pot noise?}
 
 ```{r}
 rbdsd.aov=aov(Yield ~ factor(Ratio.Control) + factor(Time), data = rbdsdLong)
@@ -167,7 +199,7 @@ $H_1: T_i\ne 0$ at least one.
 
 From the ANOVA, observing the standard deviation of Voltage we see that we have f-value of 50.756 and a very small p-value of 4.34e-08 for ratio control. We reject our null hypothesis and conclude that ratio control does affect standard deviation or "pot noise". 
 
-(c)
+\textbf{(c) Conduct any residual analyses that seem appropriate}
 
 ```{r,echo=FALSE,out.width='.49\\linewidth', fig.width=3, fig.height=3}
 rbdvolt.lm = lm(Yield ~ factor(Ratio.Control) + factor(Time), rbdvoltLong)
@@ -178,11 +210,20 @@ plot(fitted(rbdvolt.lm), abs(residuals(rbdvolt.lm)))
 
 By performing a qqplot and residual plots we see that normality is up to check and our residual plot is a structureless pattern which means that our model is good.
 
-(d)
+\textbf{(d) Which ratio control algorithm would you select if your
+objective is to reduce both the average cell voltage and
+the pot noise?}
 
 From the first algorithm we were unsuccesful to reduce the voltage, on the other hand on algorithm two we manage to reduce the SD or Pot Noise successfully. It is best to choose algorithm 2.
 
+\pagebreak
+
 ##4.18
+
+\textbf{Suppose that the observation for chemical type 2 and
+bolt 3 is missing in Problem 4.3. Analyze the problem by estimating
+the missing value. Perform the exact analysis and
+compare the results.}
 
 ```{r}
 clothMissing=clothLong
@@ -202,7 +243,19 @@ summary(a)
 
 Using R we are able to set the missing value as x and solve it, which results to 75.25. In which this value gives us the minimum error. As we can see from our new anova we see that all p-values and f-values are to check and can confirm this model is a good model.
 
+\pagebreak
+
 ##4.22
+
+\textbf{The effect of five different ingredients (A, B, C, D, E)
+on the reaction time of a chemical process is being studied.
+Each batch of new material is only large enough to permit five
+runs to be made. Furthermore, each run requires approximately
+one and a half hours, so only five runs can be made in one day. The experimenter
+decides to run the experiment as a Latin square so that
+day and batch effects may be systematically controlled. She
+obtains the data that follow. Analyze the data from this experiment
+(use $\alpha$ = 0.05) and draw conclusions.}
 
 ```{r}
 library(readxl)
