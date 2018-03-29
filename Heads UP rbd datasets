@@ -1,5 +1,14 @@
 # HCH4-JLEM-Math-447
 Homework 3, Chapter 4
 
+Datasets:
+4.3:cloth
+4.7:cscale
+
+4.13:
 rbdvolt and rbdsd are two separate datasets dedicated for the question 4.13. One is voltage and the other handles the Standard Deviation,
 respectively.
+
+4.18:cloth (again)
+
+4.22: chemical
